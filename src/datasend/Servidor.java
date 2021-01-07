@@ -22,7 +22,7 @@ public class Servidor {
                 DataInputStream dis = new DataInputStream(cl.getInputStream());
                 
                 int buff_size = dis.readInt();
-                int n_archivos = dis.read();
+                int n_archivos = dis.readInt();
                 System.out.println("Se recibirán " + n_archivos + " archivos con un buff de "+buff_size);
                 byte[] b = new byte[buff_size];
                 for (int i = 0; i < n_archivos; i++) {

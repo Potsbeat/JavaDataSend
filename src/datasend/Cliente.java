@@ -56,7 +56,7 @@ public class Cliente {
 
             dos.writeInt(buff_size);
             dos.flush();
-            dos.write(f.length);
+            dos.writeInt(f.length);
             dos.flush();
 
             progreso = new Progreso();
@@ -64,7 +64,7 @@ public class Cliente {
             total = 0;
             for (File file : f) {
                 progreso.appendRow(file.getName(), humanReadableByteCountSI(file.length()));
-                //progreso.listAppend(file.getName() + " " + humanReadableByteCountSI(file.length()) + "\n");
+               
                 total += file.length();
             }
             progreso.update(progreso.getGraphics());
