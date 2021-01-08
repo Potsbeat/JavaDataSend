@@ -10,7 +10,6 @@ import java.net.*;
 import java.io.*;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 public class Cliente {
@@ -46,7 +45,7 @@ public class Cliente {
     public void conectar(String host, int port, int buff_size, boolean nagle, File[] f) {
         try {
 
-            Socket cl = new Socket(host, port);
+            Socket cl = new Socket(InetAddress.getByName(host), port);
 
             cl.setTcpNoDelay(!nagle); //Activa o desactiva el algoritmo de Nagle
 
@@ -78,6 +77,7 @@ public class Cliente {
                         DataInputStream dis = new DataInputStream(new FileInputStream(file.getAbsolutePath()));
                         dos.writeUTF(file.getName());
                         dos.flush();
+                        
                         dos.writeLong(file.length());
                         dos.flush();
 

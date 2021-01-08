@@ -26,9 +26,11 @@ public class Servidor {
                 System.out.println("Se recibirán " + n_archivos + " archivos con un buff de "+buff_size);
                 byte[] b = new byte[buff_size];
                 for (int i = 0; i < n_archivos; i++) {
+                    String nombre;
                     
-                    String nombre = dis.readUTF();
-                    System.out.println("Recibimos el archivo:" + nombre);
+                    nombre = dis.readUTF();
+                    
+                    //System.out.println("Recibimos el archivo:" + nombre);
                     long tam = dis.readLong();
                     DataOutputStream dos = new DataOutputStream(new FileOutputStream(nombre));
                     long recibidos = 0;
