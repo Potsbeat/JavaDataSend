@@ -8,6 +8,7 @@ package datasend;
 import javax.swing.JFileChooser;
 import java.net.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import javax.swing.SwingWorker;
@@ -75,7 +76,9 @@ public class Cliente {
                         enviados = 0;
 
                         DataInputStream dis = new DataInputStream(new FileInputStream(file.getAbsolutePath()));
-                        dos.writeUTF(file.getName());
+                        byte[] nombreB = file.getName().getBytes(StandardCharsets.UTF_8);
+                        String nombre = new String(nombreB,"UTF-8");
+                        dos.writeUTF(nombre);
                         dos.flush();
                         
                         dos.writeLong(file.length());
@@ -106,7 +109,8 @@ public class Cliente {
                         dis.close();
 
                     }
-
+                    
+                    
                     dos.close();
                     cl.close();
                     return null;

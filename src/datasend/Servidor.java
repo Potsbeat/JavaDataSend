@@ -16,7 +16,7 @@ public class Servidor {
             ServerSocket s = new ServerSocket(7000);
             // Iniciamos el ciclo infinito del servidor
             for (;;) {
-                // Esperamos una conexión 
+                // Esperamos una conexiÃ³n 
                 Socket cl = s.accept();
                 System.out.println("Conexión establecida desde" + cl.getInetAddress() + ":" + cl.getPort());
                 DataInputStream dis = new DataInputStream(cl.getInputStream());
@@ -27,10 +27,9 @@ public class Servidor {
                 byte[] b = new byte[buff_size];
                 for (int i = 0; i < n_archivos; i++) {
                     String nombre;
-                    
                     nombre = dis.readUTF();
                     
-                    //System.out.println("Recibimos el archivo:" + nombre);
+                    System.out.println("Recibimos el archivo:" + nombre);
                     long tam = dis.readLong();
                     DataOutputStream dos = new DataOutputStream(new FileOutputStream(nombre));
                     long recibidos = 0;
