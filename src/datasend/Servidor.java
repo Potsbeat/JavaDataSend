@@ -18,17 +18,21 @@ public class Servidor {
             for (;;) {
                 // Esperamos una conexiÃ³n 
                 Socket cl = s.accept();
-                System.out.println("Conexión establecida desde" + cl.getInetAddress() + ":" + cl.getPort());
+                System.out.println("Conexi�n establecida desde" + cl.getInetAddress() + ":" + cl.getPort());
                 DataInputStream dis = new DataInputStream(cl.getInputStream());
                 
                 int buff_size = dis.readInt();
                 int n_archivos = dis.readInt();
-                System.out.println("Se recibirán " + n_archivos + " archivos con un buff de "+buff_size);
+                System.out.println("Se recibir�n " + n_archivos + " archivos con un buff de "+buff_size);
                 byte[] b = new byte[buff_size];
                 for (int i = 0; i < n_archivos; i++) {
                     String nombre;
-                    nombre = dis.readUTF();
-                    
+                    try{
+                        nombre = dis.readUTF();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        continue;
+                    }
                     System.out.println("Recibimos el archivo:" + nombre);
                     long tam = dis.readLong();
                     DataOutputStream dos = new DataOutputStream(new FileOutputStream(nombre));

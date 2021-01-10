@@ -76,9 +76,9 @@ public class Cliente {
                         enviados = 0;
 
                         DataInputStream dis = new DataInputStream(new FileInputStream(file.getAbsolutePath()));
-                        byte[] nombreB = file.getName().getBytes(StandardCharsets.UTF_8);
-                        String nombre = new String(nombreB,"UTF-8");
-                        dos.writeUTF(nombre);
+                        //byte[] nombreB = file.getName().getBytes(StandardCharsets.UTF_8);
+                        //String nombre = new String(nombreB,"UTF-8");
+                        dos.writeUTF(file.getName());
                         dos.flush();
                         
                         dos.writeLong(file.length());
