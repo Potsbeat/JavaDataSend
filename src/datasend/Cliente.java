@@ -45,7 +45,7 @@ public class Cliente {
 
     public void conectar(String host, int port, int buff_size, boolean nagle, File[] f) {
         try {
-
+            /*
             Socket cl = new Socket(InetAddress.getByName(host), port);
 
             cl.setTcpNoDelay(!nagle); //Activa o desactiva el algoritmo de Nagle
@@ -53,10 +53,14 @@ public class Cliente {
             byte[] b = new byte[buff_size];
 
             DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
-
+            System.out.print("Vamos a volver a abrir dataOutoutstream en cliente\n");
             dos.writeInt(buff_size);
+            System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
             dos.flush();
+            dos.flush();
+            System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
             dos.writeInt(f.length);
+            dos.flush();
             dos.flush();
 
             progreso = new Progreso();
@@ -68,29 +72,67 @@ public class Cliente {
                 total += file.length();
             }
             progreso.update(progreso.getGraphics());
+            */
             new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
                     enviados2 = 0;
                     for (File file : f) {
+                        ///*******************************************************
+                        Socket cl = new Socket(InetAddress.getByName(host), port);
+
+                        cl.setTcpNoDelay(!nagle); //Activa o desactiva el algoritmo de Nagle
+
+                        byte[] b = new byte[buff_size];
+
+                        DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
+                        System.out.print("Vamos a volver a abrir dataOutoutstream en cliente\n");
+                        dos.writeInt(buff_size);
+                        System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
+                        dos.flush();
+                        dos.flush();
+                        System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
+                        dos.writeInt(f.length);
+                        dos.flush();
+                        dos.flush();
+
+                        progreso = new Progreso();
+
+                        total = 0;
+                        for (File fi : f) {
+                            progreso.appendRow(fi.getName(), humanReadableByteCountSI(fi.length()));
+
+                            total += fi.length();
+                        }
+                        progreso.update(progreso.getGraphics());
+                        ///*******************************************
+                        System.out.print("archivo " + file.getName());
+                        System.out.print("vamos por el envio de un archivo\n");
                         enviados = 0;
 
                         DataInputStream dis = new DataInputStream(new FileInputStream(file.getAbsolutePath()));
                         //byte[] nombreB = file.getName().getBytes(StandardCharsets.UTF_8);
                         //String nombre = new String(nombreB,"UTF-8");
-                        dos.writeUTF(file.getName());
+                        //dos.writeInt(file.getName().getBytes(StandardCharsets.UTF_8).length);//cuenta el numero de bytes del nombre
+                        dos.writeUTF(file.getName());//escribirmos el nombre como bytes
+                        System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                         dos.flush();
-                        
+                        dos.flush();
+                        System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                         dos.writeLong(file.length());
+                        System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                         dos.flush();
-
+                        dos.flush();
+                        System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                         progreso.enviandoSetLabel("Enviando: " + file.getName());
 
                         while (enviados < file.length()) {
                             n = dis.read(b);
                             dos.write(b, 0, n);
+                            System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                             dos.flush();
-
+                            dos.flush();
+                            System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                             enviados = enviados + n;
                             enviados2 = enviados2 + n;
                             porcentaje = (int) (enviados * 100 / file.length());
@@ -107,12 +149,11 @@ public class Cliente {
 
                         System.out.print("\n\nArchivo enviado");
                         dis.close();
-
+                        dos.close();
+                        cl.close();
                     }
-                    
-                    
-                    dos.close();
-                    cl.close();
+                    //dos.close();
+                    //cl.close();
                     return null;
 
                 }
