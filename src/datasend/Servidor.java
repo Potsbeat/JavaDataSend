@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package datasend;
+
 import java.net.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class Servidor {
-
+   
     public static void main(String[] args) {
         try {
             // Creamos el socket
@@ -20,67 +20,55 @@ public class Servidor {
                 // Esperamos una conexiÃ³n 
                 Socket cl = s.accept();
                 System.out.println("Conexión establecida desde" + cl.getInetAddress() + ":" + cl.getPort());
-                //BufferedInputStream bis = new BufferedInputStream(cl.getInputStream());
-                //DataInputStream dis = new DataInputStream(bis);
+                /*
                 DataInputStream dis = new DataInputStream(cl.getInputStream());
+                int flujo = dis.available();
                 
+                System.out.print(" flujo: " + flujo + "\n");
                 int buff_size = dis.readInt();
-                System.out.print("lectura del primer entero\n");
                 int n_archivos = dis.readInt();
-                System.out.print("lectura del segundo entero\n");
-                System.out.println("Se recibirán " + n_archivos + " archivos con un buff de "+buff_size);
-                
                 byte[] b = new byte[buff_size];
+                */
+                DataInputStream dis = new DataInputStream(cl.getInputStream());
+                //int n_archivos = 1;
                 
-                for (int i = 0; i < n_archivos; i++) {
-                    //int n_tamanioNombreFile = dis.readInt();
-                    //System.out.print("El numero de bytes que ha de leer para sacar el nombre es: " + n_tamanioNombreFile);
-                    /*if(i>0){
-                        buff_size = dis.readInt();
-                        System.out.print("lectura del primer entero\n");
-                        n_archivos = dis.readInt();
-                        System.out.print("lectura del segundo entero\n");
-                        System.out.println("Se recibirán " + n_archivos + " archivos con un buff de "+buff_size);
-                        n_tamanioNombreFile = dis.readInt();
-                    }*/
-                    String nombre;
-                    //byte [] nombreb = new byte [n_tamanioNombreFile];
-                    //dis.read(nombreb, 0, n_tamanioNombreFile);
+                //for(i =0; i<n_archivos; i++){
+                //while(true) { // se va a tronar cuando ya no hayan archivos
+                    //**********************************************************************
+                    //DataInputStream dis = new DataInputStream(cl.getInputStream());
+                    String nombre = "cualquier cosa";
                     try{
-                        nombre = dis.readUTF();
-                    }catch(EOFException e){
-                        System.out.print("HEMOS LLEGADO AL FINAL SIN LEER TODOS LOS BYTES  ?????  \n ");
-                        continue;
+                        nombre  = dis.readUTF();
+                    }catch(UTFDataFormatException e){
+                        System.out.print("que cachamos con 1.UTF " + nombre + "\n");
                     }
-                    System.out.print("lectura en UTF-8 nombre de " + nombre + "\n");
-                    //nombre = new String(nombreb, StandardCharsets.UTF_8);
+                    FileOutputStream fos = new FileOutputStream(nombre);
+                    
+                    int buff_size = dis.readInt();
+                    //int n_archivos = dis.readInt();
+                    
+                    byte[] b = new byte[buff_size];
+                    //**********************************************************************
+                    long tam = 0;
                     System.out.println("Recibimos el archivo:" + nombre);
-                    System.out.print("Con " + nombre.getBytes().length + " bytes en el nombre\n");
-                    long tam = dis.readLong();
-                    System.out.print("lectura de un long\n");
-                    DataOutputStream dos = new DataOutputStream(new FileOutputStream(nombre));
-                    if(dos != null){
-                        System.out.print("Encontro el archivo\n");
-                    }else{
-                        System.out.print("NO encontro el archivo\n");
-                    }
-                    System.out.print("Despues de la creacion de dos\n");
+                    tam = dis.readLong();// lectura del archivo // tamaño del archivo
+                    
+                    //DataOutputStream dos = new DataOutputStream(new FileOutputStream(nombre));
                     long recibidos = 0;
                     int n, porcentaje;
-                    while (recibidos < tam) {
-                        n = dis.read(b);
-                        System.out.print("lectura normal\n");
-                        dos.write(b, 0, n);
-                        dos.flush();
-                        dos.flush();
+                    while ((n = dis.read(b, 0, Math.min(b.length, (int)tam)))>0) {
+                        //n = dis.read(b);
+                        fos.write(b, 0, n);
+                        fos.flush();
+                        fos.flush();
                         recibidos = recibidos + n;
                         porcentaje = (int) (recibidos * 100 / tam);
                         System.out.print("Recibido: " + porcentaje + "%\r");
                     }//While
                     System.out.print("\n\nArchivo recibido.\n");
-                    dos.close();
-                }
-                dis.close();
+                    fos.close();
+                    dis.close();
+                //}//For
                 cl.close();
             }
         } catch (Exception e) {

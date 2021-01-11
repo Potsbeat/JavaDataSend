@@ -3,8 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package datasend;
-
 import javax.swing.JFileChooser;
 import java.net.*;
 import java.io.*;
@@ -45,94 +43,80 @@ public class Cliente {
 
     public void conectar(String host, int port, int buff_size, boolean nagle, File[] f) {
         try {
+            for(File file : f){
+                System.out.print("Se ha seleccionado : " + file.getName());
+            }
+            
+
+//********************
             /*
             Socket cl = new Socket(InetAddress.getByName(host), port);
-
             cl.setTcpNoDelay(!nagle); //Activa o desactiva el algoritmo de Nagle
-
             byte[] b = new byte[buff_size];
-
             DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
-            System.out.print("Vamos a volver a abrir dataOutoutstream en cliente\n");
-            dos.writeInt(buff_size);
-            System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
+            FileInputStream fis = new FileInputStream(file.getName());
+            dos.writeInt(buff_size); // tamaño del buffer
+            System.out.print("hemos escrito 4 bytes en el flujo de salida - tamaño del buffer\n");
             dos.flush();
+            //dos.flush();
+            dos.writeInt(f.length); // numero de archivos 
+            System.out.print("hemos escrito 4 bytes mas en el flujo de salida - numero de archivos\n");
             dos.flush();
-            System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
-            dos.writeInt(f.length);
-            dos.flush();
-            dos.flush();
-
+            //dos.flush();
+            */
+//************************
             progreso = new Progreso();
 
             total = 0;
             for (File file : f) {
                 progreso.appendRow(file.getName(), humanReadableByteCountSI(file.length()));
-               
                 total += file.length();
             }
             progreso.update(progreso.getGraphics());
-            */
             new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
                     enviados2 = 0;
                     for (File file : f) {
-                        ///*******************************************************
+                       
+                        //**************************
                         Socket cl = new Socket(InetAddress.getByName(host), port);
-
                         cl.setTcpNoDelay(!nagle); //Activa o desactiva el algoritmo de Nagle
-
                         byte[] b = new byte[buff_size];
-
                         DataOutputStream dos = new DataOutputStream(cl.getOutputStream());
-                        System.out.print("Vamos a volver a abrir dataOutoutstream en cliente\n");
-                        dos.writeInt(buff_size);
-                        System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
+                        
+                        //dos.writeInt(f.length); // numero de archivos 
+                        //System.out.print("hemos escrito 4 bytes mas en el flujo de salida - numero de archivos\n");
+                        //dos.flush();
+                        
+                        dos.writeUTF(file.getName());
                         dos.flush();
+                        
+                        dos.writeInt(buff_size); // tamaño del buffer
+                        System.out.print("hemos escrito 4 bytes en el flujo de salida - tamaño del buffer\n");
                         dos.flush();
-                        System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
-                        dos.writeInt(f.length);
-                        dos.flush();
-                        dos.flush();
-
-                        progreso = new Progreso();
-
-                        total = 0;
-                        for (File fi : f) {
-                            progreso.appendRow(fi.getName(), humanReadableByteCountSI(fi.length()));
-
-                            total += fi.length();
-                        }
-                        progreso.update(progreso.getGraphics());
-                        ///*******************************************
-                        System.out.print("archivo " + file.getName());
-                        System.out.print("vamos por el envio de un archivo\n");
+                        //dos.flush();
+                        
+                        //dos.flush();
+                        System.out.print("Archivo " + file.getName() + "\n");
+                        System.out.print("De tamaño  " + file.length() + "\n");
                         enviados = 0;
-
-                        DataInputStream dis = new DataInputStream(new FileInputStream(file.getAbsolutePath()));
-                        //byte[] nombreB = file.getName().getBytes(StandardCharsets.UTF_8);
-                        //String nombre = new String(nombreB,"UTF-8");
-                        //dos.writeInt(file.getName().getBytes(StandardCharsets.UTF_8).length);//cuenta el numero de bytes del nombre
-                        dos.writeUTF(file.getName());//escribirmos el nombre como bytes
-                        System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
-                        dos.flush();
-                        dos.flush();
-                        System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
+                        
+ 
                         dos.writeLong(file.length());
-                        System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                         dos.flush();
-                        dos.flush();
-                        System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
+                        
+                        //DataInputStream dis = new DataInputStream(new FileInputStream(file.getAbsolutePath()));
+                        //dos.flush();
+                        //**************************
                         progreso.enviandoSetLabel("Enviando: " + file.getName());
-
+                        FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+                        //while (fis.read(b)>0) {
                         while (enviados < file.length()) {
-                            n = dis.read(b);
+                            n = fis.read(b);
                             dos.write(b, 0, n);
-                            System.out.print("Antes del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
                             dos.flush();
-                            dos.flush();
-                            System.out.print("Despues del flush - Ver cuantos bytes lleva el flujo de salida del cliente: " + dos.size());
+                            //dos.flush();
                             enviados = enviados + n;
                             enviados2 = enviados2 + n;
                             porcentaje = (int) (enviados * 100 / file.length());
@@ -146,9 +130,14 @@ public class Cliente {
                             progreso.getProgreso_general_bar().setString(porcentaje2 + "%");
 
                         }//While
-
+                        if(enviados != file.length()){
+                            System.out.println("o faltan o sobran bytes por mandar");
+                        }else{
+                            System.out.println("se han enviado todos los bytes");
+                        }
+                        System.out.println("");
                         System.out.print("\n\nArchivo enviado");
-                        dis.close();
+                        fis.close();
                         dos.close();
                         cl.close();
                     }
