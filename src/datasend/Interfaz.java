@@ -50,7 +50,7 @@ public class Interfaz extends javax.swing.JFrame {
 
         jLabel2.setText("Puerto");
 
-        jLabel3.setText("Tama√±o del b√∫ffer en bytes");
+        jLabel3.setText("TamaÒo del buffer en bytes");
 
         buff_field.setText("4096");
 
@@ -64,7 +64,7 @@ public class Interfaz extends javax.swing.JFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel4.setText("Env√≠o de archivos");
+        jLabel4.setText("EnvÌo de archivos");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

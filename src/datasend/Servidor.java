@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
+package datasend;
+
 import java.net.*;
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 public class Servidor {
    
@@ -19,7 +19,7 @@ public class Servidor {
             for (;;) {
                 // Esperamos una conexiÃ³n 
                 Socket cl = s.accept();
-                System.out.println("Conexión establecida desde" + cl.getInetAddress() + ":" + cl.getPort());
+                System.out.println("Conexi�n establecida desde" + cl.getInetAddress() + ":" + cl.getPort());
                 /*
                 DataInputStream dis = new DataInputStream(cl.getInputStream());
                 int flujo = dis.available();
@@ -41,6 +41,7 @@ public class Servidor {
                         nombre  = dis.readUTF();
                     }catch(UTFDataFormatException e){
                         System.out.print("que cachamos con 1.UTF " + nombre + "\n");
+                        continue;
                     }
                     FileOutputStream fos = new FileOutputStream(nombre);
                     
@@ -51,13 +52,13 @@ public class Servidor {
                     //**********************************************************************
                     long tam = 0;
                     System.out.println("Recibimos el archivo:" + nombre);
-                    tam = dis.readLong();// lectura del archivo // tamaño del archivo
+                    tam = dis.readLong();// lectura del archivo // tama�o del archivo
                     
                     //DataOutputStream dos = new DataOutputStream(new FileOutputStream(nombre));
                     long recibidos = 0;
                     int n, porcentaje;
-                    while ((n = dis.read(b, 0, Math.min(b.length, (int)tam)))>0) {
-                        //n = dis.read(b);
+                    while (recibidos<tam) {
+                        n = dis.read(b);
                         fos.write(b, 0, n);
                         fos.flush();
                         fos.flush();

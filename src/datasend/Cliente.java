@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package datasend;
+
 import javax.swing.JFileChooser;
 import java.net.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import javax.swing.SwingWorker;
@@ -44,7 +45,7 @@ public class Cliente {
     public void conectar(String host, int port, int buff_size, boolean nagle, File[] f) {
         try {
             for(File file : f){
-                System.out.print("Se ha seleccionado : " + file.getName());
+                System.out.println("Se ha seleccionado : " + file.getName());
             }
             
 
@@ -78,7 +79,7 @@ public class Cliente {
                 protected Object doInBackground() throws Exception {
                     enviados2 = 0;
                     for (File file : f) {
-                       
+                        System.out.println("Nuevo archivo");
                         //**************************
                         Socket cl = new Socket(InetAddress.getByName(host), port);
                         cl.setTcpNoDelay(!nagle); //Activa o desactiva el algoritmo de Nagle
@@ -92,14 +93,14 @@ public class Cliente {
                         dos.writeUTF(file.getName());
                         dos.flush();
                         
-                        dos.writeInt(buff_size); // tama√±o del buffer
-                        System.out.print("hemos escrito 4 bytes en el flujo de salida - tama√±o del buffer\n");
+                        dos.writeInt(buff_size); // tamaÒo del buffer
+                       
                         dos.flush();
                         //dos.flush();
                         
                         //dos.flush();
                         System.out.print("Archivo " + file.getName() + "\n");
-                        System.out.print("De tama√±o  " + file.length() + "\n");
+                        System.out.print("De tamaÒo  " + file.length() + "\n");
                         enviados = 0;
                         
  
@@ -131,12 +132,12 @@ public class Cliente {
 
                         }//While
                         if(enviados != file.length()){
-                            System.out.println("o faltan o sobran bytes por mandar");
+                            System.out.println("faltan o sobran bytes por mandar");
                         }else{
                             System.out.println("se han enviado todos los bytes");
                         }
-                        System.out.println("");
-                        System.out.print("\n\nArchivo enviado");
+                        
+                        System.out.println("\nArchivo enviado");
                         fis.close();
                         dos.close();
                         cl.close();
